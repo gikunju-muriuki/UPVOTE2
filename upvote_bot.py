@@ -21,9 +21,10 @@ time.sleep(total_delay_seconds)
 # 1. Configuration
 MY_ACCOUNT = "bnwt"
 TARGET_AUTHOR = "blog.god"
-VOTE_WEIGHT = 100          # 1 to 100
-BLOG_FETCH_LIMIT = 20      # How many recent blog entries to inspect
-MAX_UPVOTES_PER_RUN = 9    # Safety cap per workflow run to protect VP/RC
+VOTE_WEIGHT = 100              # 1 to 100
+BLOG_FETCH_LIMIT = 20          # How many recent blog entries to inspect
+MAX_UPVOTES_PER_RUN = 9        # Safety cap per workflow run to protect VP/RC
+VOTE_INTERVAL_SECONDS = 4      # Safely above Steem's 3-second minimum vote interval
 STEEM_NODES = [
     "https://api.moecki.online",
     "https://api.campingclub.me",
@@ -79,11 +80,16 @@ try:
             continue
 
         print(f"Unvoted post found: {identifier}. Upvoting with {VOTE_WEIGHT}% power...")
-        target_comment = Comment(identifier, blockchain_instance=stm)
-        target_comment.upvote(weight=VOTE_WEIGHT, voter=MY_ACCOUNT)
-        upvoted_count += 1
-        print(f"Upvote broadcasted ({upvoted_count}/{MAX_UPVOTES_PER_RUN}).")
-        time.sleep(2)
+        try:
+            target_comment = Comment(identifier, blockchain_instance=stm)
+            target_comment.upvote(weight=VOTE_WEIGHT, voter=MY_ACCOUNT)
+            upvoted_count += 1
+            print(f"Upvote broadcasted ({upvoted_count}/{MAX_UPVOTES_PER_RUN}).")
+            print(f"Waiting {VOTE_INTERVAL_SECONDS}s to respect Steem's 3-second vote interval...")
+            time.sleep(VOTE_INTERVAL_SECONDS)
+        except Exception as vote_err:
+            print(f"Warning: Failed to upvote {identifier}: {vote_err}")
+            time.sleep(VOTE_INTERVAL_SECONDS)
 
     print(f"Finished run. Total new upvotes broadcasted: {upvoted_count}")
 
