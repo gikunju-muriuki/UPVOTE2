@@ -24,13 +24,14 @@ TARGET_AUTHOR = "blog.god"
 VOTE_WEIGHT = 100          # 1 to 100
 BLOG_FETCH_LIMIT = 20      # How many recent blog entries to inspect
 MAX_UPVOTES_PER_RUN = 9    # Safety cap per workflow run to protect VP/RC
-PROXY_URL = [
+STEEM_NODES = [
     "https://api.moecki.online",
     "https://api.campingclub.me",
     "https://api2.justyy.com",
     "https://api3.justyy.com",
-    "https://steem-proxy.gikunju.workers.dev"
+    "https://steem-proxy.gikunju.workers.dev",
 ]
+
 # 2. Extract Key from GitHub Secrets
 MY_PRIVATE_POSTING_KEY = os.getenv("STEEM_POSTING_KEY")
 
@@ -39,8 +40,8 @@ if not MY_PRIVATE_POSTING_KEY:
     exit(1)
 
 try:
-    print(f"Connecting to node via proxy: {PROXY_URL}")
-    stm = Steem(node=[PROXY_URL], keys=[MY_PRIVATE_POSTING_KEY])
+    print(f"Connecting to nodes: {STEEM_NODES}")
+    stm = Steem(node=STEEM_NODES, keys=[MY_PRIVATE_POSTING_KEY])
 
     target_account = Account(TARGET_AUTHOR, blockchain_instance=stm)
     blog_history = target_account.get_blog(limit=BLOG_FETCH_LIMIT)
