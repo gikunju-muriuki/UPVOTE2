@@ -24,8 +24,13 @@ TARGET_AUTHOR = "blog.god"
 VOTE_WEIGHT = 100          # 1 to 100
 BLOG_FETCH_LIMIT = 20      # How many recent blog entries to inspect
 MAX_UPVOTES_PER_RUN = 9    # Safety cap per workflow run to protect VP/RC
-PROXY_URL = "https://steem-proxy.gikunju.workers.dev"
-
+PROXY_URL = [
+    "https://api.moecki.online",
+    "https://api.campingclub.me",
+    "https://api2.justyy.com",
+    "https://api3.justyy.com",
+    "https://steem-proxy.gikunju.workers.dev"
+]
 # 2. Extract Key from GitHub Secrets
 MY_PRIVATE_POSTING_KEY = os.getenv("STEEM_POSTING_KEY")
 
